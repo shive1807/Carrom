@@ -1,0 +1,174 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+public enum CoinType
+{
+    None,
+    White,
+    Black,
+    Pink
+}
+
+public class CircleObject
+{
+    public Vector2 Position { get; set; }
+    public Vector2 Velocity { get; set; }
+    public float Radius { get; set; }
+    public float Mass { get; set; }
+    public bool IsStriker { get; set; }
+    public CoinType Type { get; set; }
+
+    public CircleObject(Vector2 position, float radius, float mass, bool isStriker, CoinType type = CoinType.None)
+    {
+        Position = position;
+        Velocity = Vector2.zero;
+        Radius = radius;
+        Mass = mass;
+        IsStriker = isStriker;
+        Type = type;
+    }
+}
+
+public class PhysicsManager : MonoBehaviour
+{
+    public List<CircleObject> objects = new List<CircleObject>();
+    public float friction = 0.1f;
+    public float velocityThreshold = 0.01f;
+    public Vector2 boardSize = new Vector2(1, 1);
+    public List<Vector2> pocketPositions;
+    public float pocketRadius;
+
+    public event Action<CircleObject> OnObjectPotted;
+    public event Action OnSimulationStopped;
+
+    private void FixedUpdate()
+    {
+        float deltaTime = Time.fixedDeltaTime;
+
+        // Update positions
+        foreach (var obj in objects)
+        {
+            obj.Position += obj.Velocity * deltaTime;
+        }
+
+        // Apply friction
+        foreach (var obj in objects)
+        {
+            obj.Velocity *= (1 - friction * deltaTime);
+            if (obj.Velocity.magnitude < velocityThreshold)
+                obj.Velocity = Vector2.zero;
+        }
+
+        // Handle collisions between objects
+        for (int i = 0; i < objects.Count; i++)
+        {
+            for (int j = i + 1; j < objects.Count; j++)
+            {
+                ResolveCollision(objects[i], objects[j]);
+            }
+        }
+
+        // Handle wall collisions
+        foreach (var obj in objects)
+        {
+            if (obj.Position.x - obj.Radius < 0)
+            {
+                obj.Position.x = obj.Radius;
+                obj.Velocity.x = -obj.Velocity.x;
+            }
+            if (obj.Position.x + obj.Radius > boardSize.x)
+            {
+                obj.Position.x = boardSize.x - obj.Radius;
+                obj.Velocity.x = -obj.Velocity.x;
+            }
+            if (obj.Position.y - obj.Radius < 0)
+            {
+                obj.Position.y = obj.Radius;
+                obj.Velocity.y = -obj.Velocity.y;
+            }
+            if (obj.Position.y + obj.Radius > boardSize.y)
+            {
+                obj.Position.y = boardSize.y - obj.Radius;
+                obj.Velocity.y = -obj.Velocity.y;
+            }
+        }
+
+        // Check for potting
+        List<CircleObject> potted = new List<CircleObject>();
+        foreach (var obj in objects)
+        {
+            foreach (var pocket in pocketPositions)
+            {
+                if (Vector2.Distance(obj.Position, pocket) < pocketRadius)
+                {
+                    potted.Add(obj);
+                    break;
+                }
+            }
+        }
+        foreach (var obj in potted)
+        {
+            objects.Remove(obj);
+            OnObjectPotted?.Invoke(obj);
+        }
+
+        // Check if all objects have stopped
+        bool allStopped = true;
+        foreach (var obj in objects)
+        {
+            if (obj.Velocity.magnitude > velocityThreshold)
+            {
+                allStopped = false;
+                break;
+            }
+        }
+        if (allStopped)
+        {
+            OnSimulationStopped?.Invoke();
+        }
+    }
+
+    private void ResolveCollision(CircleObject a, CircleObject b)
+    {
+        Vector2 delta = a.Position - b.Position;
+        float distance = delta.magnitude;
+        if (distance < a.Radius + b.Radius)
+        {
+            Vector2 normal = delta / distance;
+            float overlap = (a.Radius + b.Radius - distance) / 2;
+            a.Position += normal * overlap;
+            b.Position -= normal * overlap;
+
+            Vector2 relativeVelocity = a.Velocity - b.Velocity;
+            float velocityAlongNormal = Vector2.Dot(relativeVelocity, normal);
+            if (velocityAlongNormal > 0)
+                return;
+
+            float m1 = a.Mass;
+            float m2 = b.Mass;
+            float factor = 2 / (m1 + m2);
+            a.Velocity -= factor * m2 * velocityAlongNormal * normal;
+            b.Velocity += factor * m1 * velocityAlongNormal * normal;
+        }
+    }
+
+    public void SetStrikerPosition(Vector2 position)
+    {
+        var striker = objects.Find(obj => obj.IsStriker);
+        if (striker != null)
+        {
+            striker.Position = position;
+            striker.Velocity = Vector2.zero;
+        }
+    }
+
+    public void FlickStriker(Vector2 velocity)
+    {
+        var striker = objects.Find(obj => obj.IsStriker);
+        if (striker != null)
+        {
+            striker.Velocity = velocity;
+        }
+    }
+}
