@@ -1,0 +1,35 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Carrom Game Project Structure
+
+## Overview
+This is a 2-player Carrom multiplayer game built in Unity with pass-and-play mechanics and a mock server architecture for future network scalability.
+
+## Key Documentation Files
+- [CarromGameDesignDocument.markdown](mdc:DocsCarrom/CarromGameDesignDocument.markdown) - Main game design document with complete specifications
+- [CarromGameCommunicationDesign.markdown](mdc:DocsCarrom/CarromGameCommunicationDesign.markdown) - Client-server communication patterns and message codes
+- [PhysicsModule.txt](mdc:DocsCarrom/PhysicsModule.txt) - Custom physics implementation for coin movement and collisions
+- [AI_Agent_Architecture_Rules.markdown](mdc:DocsCarrom/AI_Agent_Architecture_Rules.markdown) - Architecture guidelines and design patterns
+
+## Unity Project Structure
+- **Assets/Scenes/** - Game scenes ([SampleScene.unity](mdc:Carrom/Assets/Scenes/SampleScene.unity))
+- **Assets/Scripts/** - All C# scripts (to be created)
+- **Assets/Sprites/** - Game assets (coins, board, striker)
+- **Assets/Settings/** - URP and rendering settings
+
+## Core Components to Implement
+1. **GameManager** - Controls game flow, turns, UI management
+2. **Board** - Handles display, input processing, server communication  
+3. **MockServer** - Implements IServer interface, manages game state
+4. **PhysicsEngine** - Custom physics for coin movement (based on PhysicsModule.txt)
+5. **UI System** - Turn indicators, score display, win messages
+
+## Game Rules
+- **Board**: Square with 4 central pots
+- **Coins**: 9 White, 9 Black, 1 Pink
+- **Players**: Player 1 (White) vs Player 2 (Black)
+- **Win**: Pot all your color coins + pink coin
+- **Foul**: Potting pink before all color coins returns pink to center
