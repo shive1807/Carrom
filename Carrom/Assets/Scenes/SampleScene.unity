@@ -381,10 +381,10 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  whiteCoinPrefab: {fileID: 0}
-  blackCoinPrefab: {fileID: 0}
-  pinkCoinPrefab: {fileID: 0}
-  strikerPrefab: {fileID: 0}
+  whiteCoinPrefab: {fileID: 9067830752395153803, guid: 389a19847280a46cc871839543e6a410, type: 3}
+  blackCoinPrefab: {fileID: 6847005559700697444, guid: 1a68afb1b5e8740d7aa0e8414b3d77ea, type: 3}
+  pinkCoinPrefab: {fileID: 8005986527339076895, guid: a62a67e8f17884273898163ac4295415, type: 3}
+  strikerPrefab: {fileID: 8386313837512389832, guid: fa361e95782714401beaa54fd4c321f5, type: 3}
   maxForceMultiplier: 5
   forceIndicator: {fileID: 0}
 --- !u!4 &1556310245

@@ -107,19 +107,16 @@ public class GameManager : MonoBehaviour
             renderer.material.color = new Color(0.8f, 0.6f, 0.4f); // Brown board color
         }
 
-        // Create pockets if not assigned - positioned so circumference touches board edges
+        // Create pockets if not assigned - positioned at the actual corners of the board
         if (pocketObjects[0] == null)
         {
             float pocketScale = 0.64f; // 2x larger pockets
-            float pocketRadius = pocketScale / 2f; // 0.32f
-            float boardEdge = 2f;
-            float pocketCenterOffset = boardEdge - pocketRadius; // 1.68f
             
             Vector2[] pocketPositions = { 
-                new Vector2(-pocketCenterOffset, -pocketCenterOffset), // Bottom-left
-                new Vector2(pocketCenterOffset, -pocketCenterOffset),  // Bottom-right
-                new Vector2(-pocketCenterOffset, pocketCenterOffset),  // Top-left
-                new Vector2(pocketCenterOffset, pocketCenterOffset)    // Top-right
+                new Vector2(-2f, -2f), // Bottom-left corner
+                new Vector2(2f, -2f),  // Bottom-right corner
+                new Vector2(-2f, 2f),  // Top-left corner
+                new Vector2(2f, 2f)    // Top-right corner
             };
 
             for (int i = 0; i < 4; i++)

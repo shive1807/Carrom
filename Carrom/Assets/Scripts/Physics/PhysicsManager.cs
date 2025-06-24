@@ -8,7 +8,7 @@ public class PhysicsManager : MonoBehaviour
     [SerializeField] private float friction = 0.1f;
     [SerializeField] private float velocityThreshold = 0.01f;
     [SerializeField] private Vector2 boardSize = new Vector2(4, 4); // Match visual board size
-    [SerializeField] private float pocketRadius = 0.16f; // Scale pocket radius proportionally
+    [SerializeField] private float pocketRadius = 0.32f; // 2x larger pocket radius
     
     // Physics Configuration - Pockets in corners (scaled for larger board)
     private List<Vector2> pocketPositions = new List<Vector2>
